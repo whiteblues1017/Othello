@@ -9,7 +9,7 @@
  * @author mori
  *  
  */
-public class AI {
+public class AI2 {
     // 深読みするレベル（大きい値だとものすごい時間がかかってしまうので注意）
     private static final int SEARCH_LEVEL = 7;
     // メインパネルへの参照
@@ -31,7 +31,7 @@ public class AI {
      * 
      * @param panel メインパネルへの参照。
      */
-    public AI(MainPanel panel) {
+    public AI2(MainPanel panel) {
         this.panel = panel;
     }
 
@@ -265,7 +265,7 @@ public class AI {
             }
         }
 
-        // 白石（AI）が有利なときは負になるので符合を反転する
+        // 白石を有利にするので符号反転
         return -value;
     }
 }

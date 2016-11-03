@@ -6,8 +6,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.applet.*;
 import javax.swing.*;
-//import java.io.*;
-
 /**
  * オセロ盤のクラス。
  * @author mori
@@ -50,7 +48,6 @@ public class MainPanel extends JPanel implements MouseListener {
     private int gameState;
     // AI
     private AI ai;
-    private AI2 ai2; 
 
     // 情報パネルへの参照
     private InfoPanel infoPanel;
@@ -66,7 +63,6 @@ public class MainPanel extends JPanel implements MouseListener {
         kachi = Applet.newAudioClip(getClass().getResource("kachi.wav"));
         // AIを作成
         ai = new AI(this);
-	ai2 = new AI2(this);
         // マウス操作を受け付けるようにする
         addMouseListener(this);
         // START状態（タイトル表示）
@@ -111,78 +107,53 @@ public class MainPanel extends JPanel implements MouseListener {
      * マウスをクリックしたとき。石を打つ。
      */
     public void mouseClicked(MouseEvent e) {
+        switch (gameState) {
+            case START :
+                // START画面でクリックされたらゲーム開始
+                gameState = PLAY;
+                break;
+            case PLAY :
+                // どこのマスかを調べる
+                int x = e.getX() / GS;
+                int y = e.getY() / GS;
 
-	    System.out.printf("Start!%n");
-
-	competition();
-    }
-
-	public void competition(){
-	    
-	    int num=0,game=1;
-	int i=0;
-	int black=0,white=0,draw=0;//それぞれの勝ち数と引き分けの数
-
-	while(game<=1000){//1000試合の自動対戦
-	    switch(gameState){
-	    case START:
-		System.out.printf("%d戦目%n",game);
-		i=0;//現在の手数
-		//START画面でクリックされたらゲーム開始
-		gameState=PLAY;
-		break;
-	    case PLAY:
-	
-		    System.out.printf("先行プログラム１%n");
-		    System.out.printf("後行プログラム２%n");
-		    while(endGame()==false){
-			if(i%2==0){
-			    ai.compute();
-			}    
-			else{
-			    ai2.compute();
-			}
-			i++;	
-		    }
-		    //System.out.printf("game=%d%n",game);
-		    break;
-		  
-		// else{
-		//     System.out.printf("先行プログラム２%n");
-		//     System.out.printf("後行プログラム１%n");
-		//      while(endGame()==false){
-		// 	if(i%2==0){
-		// 	    ai2.compute();
-		// 	}    
-		// 	else{
-		// 	    ai.compute();
-		// 	}
-		// 	i++;
-		//      }
-		//      //System.out.printf("game=%d%n",game);
-		// 	break;
-		// }
-	    case YOU_WIN:
-		if(gameState==YOU_WIN){black++;}
-	    case YOU_LOSE:
-		if(gameState==YOU_LOSE){white++;}
-	    case DRAW:
-		if(gameState==DRAW){draw++;}
-		System.out.printf("戦績：プログラム１%,d勝:プログラム２%d勝：引き分け%d回%n%n",black,white,draw);
-		
-		System.out.printf("game=%d%n",game);
-		// ゲーム終了時にクリックされたらスターとへ戻る
+                // (x, y)に石が打てる場合だけ打つ
+                if (canPutDown(x, y)) {
+                    // 戻せるように記録しておく
+                    Undo undo = new Undo(x, y);
+                    // その場所に石を打つ
+                    putDownStone(x, y, false);
+                    // ひっくり返す
+                    reverse(undo, false);
+                    // 終了したか調べる
+                    endGame();
+                    // 手番を変える
+                    nextTurn();
+                    // AIがパスの場合はもう一回
+                    if (countCanPutDownStone() == 0) {
+                        System.out.println("AI PASS!");
+                        nextTurn();
+                        return;
+                    } else {
+                        // パスでなかったらAIが石を打つ
+                        ai.compute();
+                    }
+                }
+                break;
+            case YOU_WIN :
+            case YOU_LOSE :
+            case DRAW :
+                // ゲーム終了時にクリックされたらスターとへ戻る
                 gameState = START;
                 // 盤面初期化
                 initBoard();
-		game++;
                 break;
-	    }
-	    repaint();
-	}
-	
-	}
-      
+        }
+
+        // 再描画する
+        repaint();
+    }
+
     /**
      * 盤面を初期化する。
      *  

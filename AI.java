@@ -266,6 +266,6 @@ public class AI {
         }
 
         // ”’ÎiAIj‚ª—L—˜‚È‚Æ‚«‚Í•‰‚É‚È‚é‚Ì‚Å•„‡‚ğ”½“]‚·‚é
-        return -value;
+        return value;
     }
 }
