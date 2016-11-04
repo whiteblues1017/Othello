@@ -1,14 +1,17 @@
 /*
  * Created on 2004/12/22
- *
+ * Edited on 2016/11/04
  */
 
 /*
  * オセロのAI。
  * 
  * @author mori
- *  
+ *　Edited by HoshinoEiko　  
  */
+import java.util.Random;
+import java.util.ArrayList;
+
 public class AI {
     // 深読みするレベル（大きい値だとものすごい時間がかかってしまうので注意）
     private static final int SEARCH_LEVEL = 7;
@@ -42,12 +45,14 @@ public class AI {
     public void compute() {
         // α-β法で石を打つ場所を決める
         // 戻ってくる値は bestX+bestY*MASU
-        int temp = alphaBeta(true, SEARCH_LEVEL, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        //int temp = alphaBeta(true, SEARCH_LEVEL, Integer.MIN_VALUE, Integer.MAX_VALUE);
+	int hoge[]=Random();
         
         // 場所を求める
-        int x = temp % MainPanel.MASU;
-        int y = temp / MainPanel.MASU;
+        int x = hoge[0];
+	int y = hoge[1];
 
+	System.out.printf("choose position x=%d, y=%d%n",x,y);
         // 打った場所、ひっくり返した石の位置を記録
         Undo undo = new Undo(x, y);
         // その場所に実際に石を打つ
@@ -64,6 +69,39 @@ public class AI {
             panel.nextTurn();
             compute();
         }
+    }
+
+
+    /*
+     * Randomに打つAI。全然強くない。
+     */
+    private int[] Random(){
+	ArrayList<int[]> allCanPutStone = new ArrayList<int[]>();
+
+	// 打てるところはすべて試す（試すだけで実際には打たない）
+        for (int y = 0; y < MainPanel.MASU; y++) {
+            for (int x = 0; x < MainPanel.MASU; x++) {
+		
+		//すでにコマが置いてあるときはパス
+                if (panel.canPutDown(x, y)==false) {
+		    continue;
+		}
+		//コマがないときは候補にいれて記憶
+		else{
+		    System.out.printf("x=%d, y=%d %n",x,y);
+		    int pos[] ={x,y};
+		    allCanPutStone.add(pos);
+		}
+                   
+	    }
+	}
+	System.out.printf("CanPutnumber=%d%n",allCanPutStone.size());
+	Random rand= new Random();
+	
+	int randsize =rand.nextInt(allCanPutStone.size()); 
+	  
+
+	    return allCanPutStone.get(randsize);
     }
 
     /*

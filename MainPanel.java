@@ -116,8 +116,10 @@ public class MainPanel extends JPanel implements MouseListener {
 
 	competition();
     }
-
-	public void competition(){
+    /*
+     *AI同士の対戦を行うメソッド 
+     */
+    public void competition(){
 	    
 	    int num=0,game=1;
 	int i=0;
