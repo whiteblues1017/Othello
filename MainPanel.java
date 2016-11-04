@@ -45,7 +45,7 @@ public class MainPanel extends JPanel implements MouseListener {
     // 打たれた石の数
     private int putNumber;
     // 石を打つ音
-    private AudioClip kachi;
+    //private AudioClip kachi;
     // ゲーム状態
     private int gameState;
     // AI
@@ -63,7 +63,7 @@ public class MainPanel extends JPanel implements MouseListener {
         // 盤面を初期化する
         initBoard();
         // サウンドをロードする
-        kachi = Applet.newAudioClip(getClass().getResource("kachi.wav"));
+        //kachi = Applet.newAudioClip(getClass().getResource("kachi.wav"));
         // AIを作成
         ai = new AI(this);
 	ai2 = new AI2(this);
@@ -264,11 +264,11 @@ public class MainPanel extends JPanel implements MouseListener {
         if (!tryAndError) {
             putNumber++;
             // カチッ
-            kachi.play();
+            //kachi.play();
             // 盤面が更新されたので再描画
             update(getGraphics());
             // 小休止を入れる（入れないとすぐにひっくり返しが始まってしまう）
-            sleep();
+            //sleep();
         }
     }
 
@@ -420,11 +420,11 @@ public class MainPanel extends JPanel implements MouseListener {
             undo.pos[undo.count++] = new Point(x, y);
             if (!tryAndError) {
                 // カチッ
-                kachi.play();
+		// kachi.play();
                 // 盤面が更新されたので再描画
                 update(getGraphics());
                 // 小休止を入れる（入れないと複数の石が一斉にひっくり返されてしまう）
-                sleep();
+                //sleep();
             }
             x += vecX;
             y += vecY;
@@ -513,11 +513,20 @@ public class MainPanel extends JPanel implements MouseListener {
      *  
      */
     public boolean endGame() {
+
+	// 黒白両方の石を数える
+	Counter counter;
+	counter = countStone();
+	
+	if(counter.blackCount==0){
+	    gameState=YOU_WIN;
+	}
+	if(counter.whiteCount==0){
+	    gameState=YOU_LOSE;
+	}
         // 打たれた石の数が60個（全部埋まった状態）以外は何もしない
         if (putNumber == END_NUMBER) {
-            // 黒白両方の石を数える
-            Counter counter;
-            counter = countStone();
+
             // 黒が過半数（64/2=32）を取っていたら勝ち
             // 過半数以下なら負け
             // 同じ数なら引き分け
